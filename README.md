@@ -19,3 +19,20 @@ POST localhost:5000/ {user:user,key:key,url:url}
 FLASK_APP=haveiread flask init-db
 FLASK_APP=haveiread flask run
 ```
+
+## Production
+http://flask.pocoo.org/docs/1.0/tutorial/deploy/
+
+Edit `instance/config.py` and add
+```python
+SECRET_KEY = b'something'
+```
+
+```bash
+pip install waitress
+waitress-serve --call 'flaskr:create_app --port=PORT'
+```
+
+## TODO
+* Deploy to [heroku](https://www.heroku.com/)
+* js faster, more beautiful and more info.
