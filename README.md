@@ -6,10 +6,10 @@ POST localhost:5000/ {user:user,key:key,url:url}
 
 ```json
 {
-  "read":true|false,
-  "status":"ok"|"wrongkey"|"newuser",
-  "lastread":time,
-  "count":count,
+  "read":true,
+  "status":"ok|wrongkey|newuser",
+  "lastread":"time",
+  "count":"count",
 }
 ```
 
