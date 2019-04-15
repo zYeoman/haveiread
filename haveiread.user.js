@@ -1,9 +1,10 @@
 // ==UserScript==
 // @name         HaveIRead
 // @namespace    https://mickir.me/
-// @version      0.5
+// @version      0.5.1
 // @description  Have I read this page?
 // @author       Mickir
+// @noframes
 // @match        http://*/*
 // @match        https://*/*
 // @grant        GM_xmlhttpRequest
