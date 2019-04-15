@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         HaveIRead
 // @namespace    https://mickir.me/
-// @version      0.3
+// @version      0.5
 // @description  Have I read this page?
 // @author       Mickir
 // @match        http://*/*
@@ -27,6 +27,7 @@
   show.style.minWidth = "24px";
   show.style.display = "none";
   const input = document.createElement("p");
+  input.contentEditable = true;
   input.style.margin = 0;
   input.style.padding = 0;
   input.style.outline = "none";
@@ -44,7 +45,6 @@
         var data = JSON.parse(response.responseText);
         if (data.status == "OK") {
           input.innerText = (data.read && (data.comment || "看过")) || "没看过";
-          if (!data.comment || !data.read) input.contentEditable = true;
           show.style.color = (data.read && "red") || "green";
           show.style.display = "block";
         } else {

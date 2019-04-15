@@ -102,7 +102,7 @@ class Comment(Resource):
             return {"status": "ERR: Wrong key!"}
         else:
             user_id = ret['id']
-            cursor.execute('''INSERT INTO comments (reader_id, url, comm)
+            cursor.execute('''INSERT or REPLACE INTO comments (reader_id, url, comm)
                     values (?,?,?)''', (user_id, url, comment))
         cursor.close()
         database.commit()
