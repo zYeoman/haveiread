@@ -41,14 +41,10 @@ class Haveread(Resource):
     def post(self):
         database = db.get_db()
         json_data = request.get_json(force=True)
-        return self.check(database, json_data)
-
-    def check(self, database, json_data):
-        """Check if read url """
         user = json_data.get('user', 'default')
         key = json_data.get('key', 'default')
         url = json_data.get('url', '')
-        title = json_data.get('comment', '看过')
+        title = json_data.get('title', '')
         if url == '':
             return {"read": False, "status": "ERR: Empty url!"}
         cursor = database.cursor()
