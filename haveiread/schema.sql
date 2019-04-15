@@ -20,6 +20,7 @@ CREATE TABLE readlist (
   reader_id INTEGER NOT NULL,
   created TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   url TEXT NOT NULL,
+  title TEXT NOT NULL,
   FOREIGN KEY (reader_id) REFERENCES user (id)
 );
 

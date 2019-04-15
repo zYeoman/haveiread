@@ -23,6 +23,7 @@ def check(database, json_data):
     user = json_data.get('user', 'default')
     key = json_data.get('key', 'default')
     url = json_data.get('url', '')
+    title = json_data.get('title', 'NoTITLE')
     if url == '':
         ret['status'] = "ERR: Empty url!"
         return ret
@@ -35,8 +36,8 @@ def check(database, json_data):
         cursor.execute(
             'INSERT INTO user (username, key) values (?,?)', (user, key))
         user_id = cursor.lastrowid
-        cursor.execute('''INSERT INTO readlist (reader_id,url)
-            VALUES (?,?)''', (user_id, url))
+        cursor.execute('''INSERT INTO readlist (reader_id,url,title)
+            VALUES (?,?,?)''', (user_id, url, title))
     elif res['key'] != key:
         ret['status'] = "ERR: Wrong key"
     else:
@@ -48,8 +49,8 @@ def check(database, json_data):
                 WHERE reader_id=? and url=?''', (user_id, url))
         all_rows = cursor.fetchall()
         # Insert readlist
-        cursor.execute('''INSERT INTO readlist (reader_id,url)
-            values (?,?)''', (user_id, url))
+        cursor.execute('''INSERT INTO readlist (reader_id,url,title)
+            values (?,?,?)''', (user_id, url, title))
         if len(all_rows) > 0:
             key = all_rows[-1].keys()[0]
             ret['read'] = True

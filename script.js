@@ -13,15 +13,19 @@
 (function() {
   "use strict";
   var url = document.URL;
-  $.post("https://api.mickir.me/", `{"url":"${url}"}`).then(function(data) {
-    if (data.status == "OK") {
-      var du = (data.read && "看过") || "没看过";
-      var a = $(
-        `<div style="border: 2px solid;font-family: sans-serif;position:fixed;top:10px;right:10px;z-index:9999;background:white;">${du}</div>`
-      );
-      a.appendTo($(document.body));
-      if (data.read) a.css("color", "red");
-      else a.css("color", "green");
+  var title = document.title;
+  $.post("https://api.mickir.me/", `{"url":"${url}","title":"${title}"}`).then(
+    function(data) {
+      if (data.status == "OK") {
+        var du = (data.read && "看过") || "没看过";
+        var a = $(
+          `<div style="border: 2px solid;font-family: sans-serif;position:fixed;top:10px;right:10px;z-index:9999;background:white;">${du}</div>`
+        );
+        a.appendTo($(document.body));
+        if (data.read) a.css("color", "red");
+        else a.css("color", "green");
+      } else {
+      }
     }
-  });
+  );
 })();
