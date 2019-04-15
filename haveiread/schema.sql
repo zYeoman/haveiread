@@ -24,4 +24,12 @@ CREATE TABLE readlist (
   FOREIGN KEY (reader_id) REFERENCES user (id)
 );
 
+CREATE TABLE comments (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  reader_id INTEGER NOT NULL,
+  url TEXT NOT NULL,
+  comm TEXT NOT NULL,
+  FOREIGN KEY (reader_id) REFERENCES user (id)
+)
+
 -- vim:et
