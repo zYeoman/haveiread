@@ -8,8 +8,8 @@
 // @match        https://*/*
 // @grant        GM_xmlhttpRequest
 // @grant        GM.xmlHttpRequest
-// @updateURL    https://raw.githubusercontent.com/zYeoman/havairead/master/haveiread.user.js
-// @downloadURL  https://raw.githubusercontent.com/zYeoman/havairead/master/haveiread.user.js
+// @updateURL    https://github.com/zYeoman/haveiread/blob/master/haveiread.user.js
+// @downloadURL  https://github.com/zYeoman/haveiread/blob/master/haveiread.user.js
 // ==/UserScript==
 
 (function() {
