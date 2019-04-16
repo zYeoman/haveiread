@@ -1,37 +1,47 @@
 // ==UserScript==
 // @name         HaveIRead
 // @namespace    https://mickir.me/
-// @version      0.5.1
+// @version      0.5.2
 // @description  Have I read this page?
 // @author       Mickir
 // @noframes
 // @match        http://*/*
 // @match        https://*/*
+// @exclude      https://www.google.com/search*
 // @grant        GM_xmlhttpRequest
 // @grant        GM.xmlHttpRequest
+// @grant        GM_addStyle
+// @grant        GM.addStyle
 // @updateURL    https://github.com/zYeoman/haveiread/blob/master/haveiread.user.js
 // @downloadURL  https://github.com/zYeoman/haveiread/blob/master/haveiread.user.js
 // ==/UserScript==
 
 (function() {
   "use strict";
+  GM.addStyle(`
+    #haveiread {
+      display: none;
+      font-family: sans-serif;
+      font-size: 10px;
+      min-width: 24px;
+      position: fixed;
+      top: 10px;
+      right: 10px;
+      z-index: 999999;
+      background: white;
+      border: 2px solid;
+    }
+    #haveiread p {
+      margin: 0;
+      padding: 0;
+      outline: none;
+    }
+    `);
   // New Element
   const show = document.createElement("div");
-  show.style.border = "2px solid";
-  show.style.fontFamily = "sans-serif";
-  show.style.position = "fixed";
-  show.style.top = "10px";
-  show.style.right = "10px";
-  show.style.zIndex = "9999";
-  show.style.background = "white";
-  show.style.fontSize = "10px";
-  show.style.minWidth = "24px";
-  show.style.display = "none";
   const input = document.createElement("p");
+  show.id = "haveiread";
   input.contentEditable = true;
-  input.style.margin = 0;
-  input.style.padding = 0;
-  input.style.outline = "none";
   show.appendChild(input);
 
   // Request
@@ -47,7 +57,9 @@
         if (data.status == "OK") {
           input.innerText = (data.read && (data.comment || "看过")) || "没看过";
           show.style.color = (data.read && "red") || "green";
-          show.style.display = "block";
+          if (input.innerText != "n") {
+            show.style.display = "block";
+          }
         } else {
         }
       }
