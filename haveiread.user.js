@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         HaveIRead
 // @namespace    https://mickir.me/
-// @version      0.6.0
+// @version      0.6.1
 // @description  Have I read this page?
 // @author       Mickir
 // @noframes
@@ -97,6 +97,7 @@
       onload: response => {
         var data = JSON.parse(response.responseText);
         if (data.status == "OK") {
+          input.blur();
         } else {
         }
       }
