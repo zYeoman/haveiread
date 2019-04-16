@@ -16,8 +16,8 @@
 // @grant        GM.getValue
 // @grant        GM_setValue
 // @grant        GM.setValue
-// @updateURL    https://github.com/zYeoman/haveiread/blob/master/haveiread.user.js
-// @downloadURL  https://github.com/zYeoman/haveiread/blob/master/haveiread.user.js
+// @updateURL    https://github.com/zYeoman/haveiread/raw/master/haveiread.user.js
+// @downloadURL  https://github.com/zYeoman/haveiread/raw/master/haveiread.user.js
 // ==/UserScript==
 
 (async () => {
