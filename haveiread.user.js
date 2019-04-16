@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         HaveIRead
 // @namespace    https://mickir.me/
-// @version      0.5.2
+// @version      0.6.0
 // @description  Have I read this page?
 // @author       Mickir
 // @noframes
@@ -12,12 +12,24 @@
 // @grant        GM.xmlHttpRequest
 // @grant        GM_addStyle
 // @grant        GM.addStyle
+// @grant        GM_getValue
+// @grant        GM.getValue
+// @grant        GM_setValue
+// @grant        GM.setValue
 // @updateURL    https://github.com/zYeoman/haveiread/blob/master/haveiread.user.js
 // @downloadURL  https://github.com/zYeoman/haveiread/blob/master/haveiread.user.js
 // ==/UserScript==
 
-(function() {
+(async () => {
   "use strict";
+  var username = await GM.getValue("user", "");
+  var key = await GM.getValue("key", "");
+  if (username == "") {
+    username = prompt("HaveIRead? Enter your username", "username");
+    key = prompt("Enter or Set your key", "key");
+    await GM.setValue("user", username);
+    await GM.setValue("key", key);
+  }
   GM.addStyle(`
     #haveiread {
       display: none;
@@ -51,7 +63,7 @@
     GM.xmlHttpRequest({
       method: "POST",
       url: "https://api.mickir.me/read/",
-      data: `{"url":"${url}","title":"${title}"}`,
+      data: `{"url":"${url}","title":"${title}","user":"${username}","key":"${key}"}`,
       onload: response => {
         var data = JSON.parse(response.responseText);
         if (data.status == "OK") {
@@ -68,14 +80,12 @@
 
   function comment(text) {
     var url = document.URL;
-    console.log(`{"url":"${url}","comment":"${text}"}`);
     GM.xmlHttpRequest({
       method: "PUT",
       url: "https://api.mickir.me/comment/",
-      data: `{"url":"${url}","comment":"${text}"}`,
+      data: `{"url":"${url}","comment":"${text},"user":"${username}","key":"${key}""}`,
       onload: response => {
         var data = JSON.parse(response.responseText);
-        console.log(response);
         if (data.status == "OK") {
         } else {
         }
