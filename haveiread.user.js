@@ -58,12 +58,16 @@
 
   // Request
   function update() {
-    var url = document.URL;
-    var title = document.title;
+    var data = {
+      url: document.URL,
+      title: document.title,
+      user: username,
+      key: key
+    };
     GM.xmlHttpRequest({
       method: "POST",
       url: "https://api.mickir.me/read/",
-      data: `{"url":"${url}","title":"${title}","user":"${username}","key":"${key}"}`,
+      data: JSON.stringify(data),
       onload: response => {
         var data = JSON.parse(response.responseText);
         if (data.status == "OK") {
@@ -79,11 +83,17 @@
   }
 
   function comment(text) {
+    var data = {
+      url: document.URL,
+      comment: text,
+      user: username,
+      key: key
+    };
     var url = document.URL;
     GM.xmlHttpRequest({
       method: "PUT",
       url: "https://api.mickir.me/comment/",
-      data: `{"url":"${url}","comment":"${text},"user":"${username}","key":"${key}""}`,
+      data: JSON.stringify(data),
       onload: response => {
         var data = JSON.parse(response.responseText);
         if (data.status == "OK") {
