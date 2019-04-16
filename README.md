@@ -36,3 +36,5 @@ waitress-serve --call 'flaskr:create_app --port=PORT'
 ## TODO
 * Deploy to [heroku](https://www.heroku.com/)
 * js faster, more beautiful and more info.
+* use raise error.
+* use peewee to contral sql.
