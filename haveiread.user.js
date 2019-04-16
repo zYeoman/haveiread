@@ -9,8 +9,8 @@
 // @match        https://*/*
 // @grant        GM_xmlhttpRequest
 // @grant        GM.xmlHttpRequest
-// @updateURL    https://github.com/zYeoman/haveiread/blob/master/haveiread.user.js
-// @downloadURL  https://github.com/zYeoman/haveiread/blob/master/haveiread.user.js
+// @updateURL    https://github.com/zYeoman/haveiread/raw/master/haveiread.user.js
+// @downloadURL  https://github.com/zYeoman/haveiread/raw/master/haveiread.user.js
 // ==/UserScript==
 
 (function() {
