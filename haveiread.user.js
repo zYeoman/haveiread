@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         HaveIRead
 // @namespace    https://mickir.me/
-// @version      0.6.1
+// @version      0.6.2
 // @description  Have I read this page?
 // @author       Mickir
 // @noframes
@@ -57,9 +57,9 @@
   show.appendChild(input);
 
   // Request
-  function update() {
+  function update(url) {
     var data = {
-      url: document.URL,
+      url: url || document.URL,
       title: document.title,
       user: username,
       key: key
@@ -105,7 +105,6 @@
   }
 
   document.body.appendChild(show);
-  document.addEventListener("pjax:end", update);
   update();
   input.addEventListener("keypress", function(evt) {
     if (evt.which === 13) {
@@ -113,4 +112,16 @@
       comment(input.innerText);
     }
   });
+  function realURL(url) {
+    var a = document.createElement("a");
+    a.href = url;
+    return a.href;
+  }
+  (function(history) {
+    var pushState = history.pushState;
+    history.pushState = function(state) {
+      update(realURL(arguments[2]));
+      return pushState.apply(history, arguments);
+    };
+  })(window.history);
 })();
