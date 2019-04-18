@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         HaveIRead
 // @namespace    https://mickir.me/
-// @version      0.6.2
+// @version      0.6.3
 // @description  Have I read this page?
 // @author       Mickir
 // @noframes
@@ -16,8 +16,8 @@
 // @grant        GM.getValue
 // @grant        GM_setValue
 // @grant        GM.setValue
-// @updateURL    https://github.com/zYeoman/haveiread/raw/master/haveiread.user.js
-// @downloadURL  https://github.com/zYeoman/haveiread/raw/master/haveiread.user.js
+// @updateURL    https://raw.github.com/zYeoman/haveiread/master/haveiread.user.js
+// @downloadURL  https://raw.github.com/zYeoman/haveiread/master/haveiread.user.js
 // ==/UserScript==
 
 (async () => {
@@ -32,6 +32,9 @@
   }
   GM.addStyle(`
     #haveiread {
+      width: unset;
+      padding: 0;
+      margin: 0;
       display: none;
       font-family: sans-serif;
       font-size: 10px;
