@@ -34,7 +34,11 @@ waitress-serve --call 'flaskr:create_app --port=PORT'
 ```
 
 ## TODO
-* Deploy to [heroku](https://www.heroku.com/)
-* js faster, more beautiful and more info.
-* use raise error.
-* use peewee to contral sql.
+* [ ] Deploy to [heroku](https://www.heroku.com/)
+* [ ] JS faster, more beautiful and more info.
+* [ ] JS only track in foreground
+* [ ] Use raise error.
+* [ ] Use peewee to control sql.
+* [ ] Flask Bcrypt
+* [ ] Track reading time
+* [ ] Info for all url in somepage: e.g. in github awesome-xxx repo / bilibili up spaces
