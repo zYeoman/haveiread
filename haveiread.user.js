@@ -8,6 +8,7 @@
 // @match        http://*/*
 // @match        https://*/*
 // @exclude      https://www.google.com/search*
+// @exclude      https://www.notion.so/*
 // @grant        GM_xmlhttpRequest
 // @grant        GM.xmlHttpRequest
 // @grant        GM_addStyle
