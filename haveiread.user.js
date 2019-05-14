@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         HaveIRead
 // @namespace    https://mickir.me/
-// @version      0.6.4
+// @version      0.6.4.rc1
 // @description  Have I read this page?
 // @author       Mickir
 // @noframes
@@ -77,7 +77,7 @@
         if (data.status === 'OK') {
           input.innerText = (data.read && (data.comment || '看过')) || '没看过'
           show.style.color = (data.read && 'red') || 'green'
-          if (input.innerText !== 'n') {
+          if (input.innerText !== 'n' && data.read && data.count < 10) {
             show.style.display = 'block'
           }
         } else {
