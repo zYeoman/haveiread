@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         HaveIRead
 // @namespace    https://mickir.me/
-// @version      0.6.4.rc1
+// @version      0.6.5
 // @description  Have I read this page?
 // @author       Mickir
 // @noframes
