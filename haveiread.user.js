@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         HaveIRead
 // @namespace    https://mickir.me/
-// @version      0.6.5
+// @version      0.6.6
 // @description  Have I read this page?
 // @author       Mickir
 // @noframes
@@ -110,6 +110,16 @@
 
   document.body.appendChild(show)
   update()
+  function appendShow () {
+    window.setTimeout(() => {
+      if (document.getElementById('haveiread') === null) {
+        console.log('Try add show again')
+        document.body.appendChild(show)
+        appendShow()
+      }
+    }, 1000)
+  }
+  appendShow()
   input.addEventListener('keypress', function (evt) {
     if (evt.which === 13) {
       evt.preventDefault()
