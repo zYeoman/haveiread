@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         HaveIRead
 // @namespace    https://mickir.me/
-// @version      0.6.6
+// @version      0.6.7
 // @description  Have I read this page?
 // @author       Mickir
 // @noframes
@@ -34,11 +34,10 @@
   window.GM.addStyle(`
     #haveiread {
       width: unset;
+      line-height: normal;
       padding: 0;
       margin: 0;
       display: none;
-      font-family: sans-serif;
-      font-size: 10px;
       min-width: 24px;
       position: fixed;
       top: 10px;
@@ -48,6 +47,8 @@
       border: 2px solid;
     }
     #haveiread p {
+      font-family: sans-serif;
+      font-size: 10px;
       margin: 0;
       padding: 0;
       outline: none;
