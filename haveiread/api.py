@@ -13,100 +13,125 @@ Only support POST
 """
 
 from flask import request, jsonify
-from flask_restful import Resource, Api
+from flask_restful import Resource, Api, abort
+from flask_bcrypt import Bcrypt
 from . import db
+
+bcrypt = Bcrypt()
 
 
 def checkUser(cursor, user, key):
     """
     Check User: if user exists check key; else create new user
     """
-    ret = {"read": False, "status": "OK"}
-    cursor.execute('SELECT * FROM user WHERE username=?', (user, ))
+    cursor.execute(
+        'SELECT id, password_hash FROM user WHERE username=?', (user, ))
     res = cursor.fetchone()
+    pw_hash = bcrypt.generate_password_hash(key)
 
     if res is None:
-        ret["status"] = "New User"
         cursor.execute(
-            'INSERT INTO user (username, key) values (?,?)', (user, key))
-        ret["id"] = cursor.lastrowid
-    elif res['key'] != key:
-        ret["status"] = "ERR: Wrong key"
+            'INSERT INTO user (username, password_hash) values (?,?)',
+            (user, pw_hash))
+        return cursor.lastrowid
+    elif bcrypt.check_password_hash(pw_hash, res['password_hash']) or \
+            (res['password_hash'] == 'default' and key == ''):
+        return res['id']
     else:
-        ret['id'] = res['id']
-    return ret
+        cursor.close()
+        abort(401, message="ERR: Wrong key")
 
 
 class Haveread(Resource):
-    def post(self):
+    def get(self, username='default'):
+        database = db.get_db()
+        params = request.args
+        if params.get('url') is None:
+            abort(400, message="Empty body")
+        cursor = database.cursor()
+        cursor.execute(
+            '''SELECT strftime("%Y-%m-%d %H:%M:%S", lastread),
+            readtime, readcount FROM readlist
+            INNER JOIN user ON user.id=readlist.user_id
+            INNER JOIN url ON url.id=readlist.url_id
+            WHERE user.username=? and url.url=?''',
+            (username, params['url']))
+        all_rows = cursor.fetchall()
+        cursor.close()
+        if len(all_rows) > 0:
+            row = all_rows[0]
+            return {'read': True,
+                    'lastread': row[0],
+                    'readtime': row['readtime'],
+                    'count': row['readcount']}
+        else:
+            return {'read': False}
+
+    def post(self, username='default'):
         database = db.get_db()
         json_data = request.get_json(force=True)
-        user = json_data.get('user', 'default')
-        key = json_data.get('key', 'default')
+        password = json_data.get('password', '')
         url = json_data.get('url', '')
         title = json_data.get('title', '')
+        readtime = json_data.get('len', 0)
         if url == '':
-            return {"read": False, "status": "ERR: Empty url!"}
+            abort(400, message="Empty url!")
         cursor = database.cursor()
-        ret = checkUser(cursor, user, key)
-        if ret["status"] == "ERR: Wrong key":
-            return ret
+        user_id = checkUser(cursor, username, password)
+        cursor.execute(
+            '''SELECT readtime, readcount FROM readlist
+            INNER JOIN url ON url.id=readlist.url_id
+            WHERE user_id=? and url.url=?''',
+            (user_id, url))
+        row = cursor.fetchall()
+        if len(row) == 0:
+            cursor.execute('''INSERT INTO url (url, title) values (?, ?)''',
+                           (url, title))
+            url_id = cursor.lastrowid
+            cursor.execute(
+                '''INSERT INTO readlist
+                (user_id, url_id, readtime, readcount)
+                values (?,?,?,?)''', (user_id, url_id, readtime, 1))
         else:
-            user_id = ret['id']
-            # Search readlist
-            cursor.execute('''SELECT strftime("%Y-%m-%d %H:%M:%S", created) FROM readlist
-                    WHERE reader_id=? and url=?''', (user_id, url))
-            all_rows = cursor.fetchall()
-            # Insert readlist
-            if len(all_rows) > 0:
-                key = all_rows[-1].keys()[0]
-                ret['read'] = True
-                ret['lastread'] = all_rows[-1][key]
-                ret['count'] = len(all_rows)
-            else:
-                ret['read'] = False
-            cursor.execute('''INSERT INTO readlist (reader_id,url,title)
-                values (?,?,?)''', (user_id, url, title))
-            cursor.execute('''SELECT comm FROM comments
-                    WHERE reader_id=? and url=?''', (user_id, url))
-            all_rows = cursor.fetchall()
-            if len(all_rows) > 0:
-                ret['comment'] = all_rows[0]['comm']
-            else:
-                ret['comment'] = ""
-
+            cursor.execute(
+                '''UPDATE readlist SET readtime=?,readcount=? ''',
+                (row[0]['readtime']+readtime//1000, row[0]['readcount']+1))
         cursor.close()
         database.commit()
-        return ret
+        return {'status': 'OK'}
 
 
 class Comment(Resource):
-    def put(self):
+    def post(self, username='default'):
         database = db.get_db()
         json_data = request.get_json(force=True)
-        user = json_data.get('user', 'default')
-        key = json_data.get('key', 'default')
+        key = json_data.get('password', 'default')
         url = json_data.get('url', '')
+        title = json_data.get('title', '')
         comment = json_data.get('comment', '')
-        if url == '':
-            return {"status": "ERR: Empty url!"}
-        if comment == '':
-            return {"status": "ERR: Empty comment!"}
+        if url == '' or comment == '':
+            abort(400, message="Empty body")
         cursor = database.cursor()
-        ret = checkUser(cursor, user, key)
-        if ret["status"] == "ERR: Wrong key":
-            return {"status": "ERR: Wrong key!"}
+        user_id = checkUser(cursor, username, key)
+        cursor.execute('''SELECT url_id FROM url WHERE url=?''', (url,))
+        rows = cursor.fetchall()
+        url_id = 0
+        if len(rows) == 0:
+            cursor.execute('''INSERT INTO url (url, title) values (?, ?)''',
+                           (url, title))
+            url_id = cursor.lastrowid
         else:
-            user_id = ret['id']
-            cursor.execute('''INSERT or REPLACE INTO comments (reader_id, url, comm)
-                    values (?,?,?)''', (user_id, url, comment))
+            url_id = rows[0]['url_id']
+        cursor.execute('''INSERT INTO comments (user_id, url_id, comm)
+                values (?,?,?)''', (user_id, url_id, comment))
         cursor.close()
         database.commit()
-        return ret
+        return {'status': 'OK'}
 
 
 def init_app(app):
     app.config.update(RESTFUL_JSON=dict(ensure_ascii=False))
+    bcrypt.init_app(app)
     api = Api(app)
-    api.add_resource(Haveread, '/read/')
-    api.add_resource(Comment, '/comment/')
+    api.add_resource(Haveread, '/read/<string:username>')
+    api.add_resource(Comment, '/comment/<string:username>')

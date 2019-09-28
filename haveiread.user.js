@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         HaveIRead
 // @namespace    https://mickir.me/
-// @version      0.7.0
+// @version      0.8.0
 // @description  Have I read this page?
 // @author       Mickir
 // @noframes
@@ -203,6 +203,7 @@
     console.log('PureUrl is ' + pureUrl)
     return pureUrl
   }
+
   // New Element
   const show = document.createElement('div')
   const input = document.createElement('p')
@@ -210,56 +211,88 @@
   input.contentEditable = true
   show.appendChild(input)
 
-  // Request
-  function update (url) {
+  var current_url = document.URL
+  let base_url = 'https://api.mickir.me'
+  let read_url = base_url + '/read/' + username
+  let comment_url = base_url + '/comment/' + username
+  function status (response) {
+    if (response.status >= 200 && response.status < 300) {
+      return Promise.resolve(response)
+    } else {
+      return Promise.reject(new Error(response.statusText))
+    }
+  }
+
+  function json (response) {
+    return response.json()
+  }
+  (function getinfo (url) {
+    var theurl = new URL(read_url)
+    var data = {
+      url: dms_get_pure_url(url)
+    }
+    theurl.search = new URLSearchParams(data)
+    fetch(theurl)
+      .then(status)
+      .then(json)
+      .then((data) => {
+        console.log(data)
+        input.innerText = (data.read && (data.comment || '看过')) || '没看过'
+        show.style.color = (data.read && 'red') || 'green'
+        if (input.innerText !== 'n' && data.read && data.count < 10) {
+          show.style.display = 'block'
+        }
+      }).catch((error) => console.log('Request Failes', error))
+  })(dms_get_pure_url(current_url))
+  function update (url, len) {
     var data = {
       url: dms_get_pure_url(url),
       title: document.title,
-      user: username,
-      key: key
+      password: key,
+      len: len
     }
-    window.GM.xmlHttpRequest({
+    fetch(read_url, {
       method: 'POST',
-      url: 'https://api.mickir.me/read/',
-      data: JSON.stringify(data),
-      onload: response => {
-        var data = JSON.parse(response.responseText)
-        if (data.status === 'OK') {
-          input.innerText = (data.read && (data.comment || '看过')) || '没看过'
-          show.style.color = (data.read && 'red') || 'green'
-          if (input.innerText !== 'n' && data.read && data.count < 10) {
-            show.style.display = 'block'
-          }
-        } else {
-        }
-      }
-    })
+      body: JSON.stringify(data)
+    }).then(status)
+      .then(json)
+      .then((data) => {
+        console.log(data)
+      }).catch((error) => console.log('Request Failes', error))
   }
 
-  function comment (text) {
-    var url = document.URL
+  function comment (url, text) {
     var data = {
-      url: url,
+      url: dms_get_pure_url(url),
+      title: document.title,
       comment: text,
-      user: username,
-      key: key
+      password: key
     }
-    window.GM.xmlHttpRequest({
-      method: 'PUT',
-      url: 'https://api.mickir.me/comment/',
-      data: JSON.stringify(data),
-      onload: response => {
-        var data = JSON.parse(response.responseText)
+    fetch(comment_url, {
+      method: 'POST', data: JSON.stringify(data)
+    }).then(status)
+      .then(json)
+      .then((data) => {
         if (data.status === 'OK') {
           input.blur()
-        } else {
         }
-      }
-    })
+      }).catch((error) => console.log('Request Failes', error))
   }
 
+  var before = new Date()
+  var len = 0
+  window.addEventListener('focus', () => {
+    before = new Date()
+  })
+  window.addEventListener('blur', () => {
+    len += (new Date()) - before
+  })
+  window.addEventListener('beforeunload', (event) => {
+    // 按ms计算
+    update(current_url, (new Date()) - before + len)
+  })
+
   document.body.appendChild(show)
-  update()
   function appendShow () {
     window.setTimeout(() => {
       if (document.getElementById('haveiread') === null) {
@@ -273,19 +306,17 @@
   input.addEventListener('keypress', function (evt) {
     if (evt.which === 13) {
       evt.preventDefault()
-      comment(input.innerText)
+      comment(current_url, input.innerText)
     }
   })
-  function realURL (url) {
-    var a = document.createElement('a')
-    a.href = url
-    return a.href
-  }
-  (function (history) {
-    var pushState = history.pushState
-    history.pushState = function (state) {
-      update(realURL(arguments[2]))
-      return pushState.apply(history, arguments)
+  // 检测url变化。
+  // 修改pushState的方式既不安全又可能再次被覆盖
+  window.setInterval(() => {
+    if (current_url !== document.URL) {
+      update(current_url, (new Date()) - before + len)
+      len = 0
+      before = new Date()
+      current_url = document.URL
     }
-  })(window.history)
+  }, 1000)
 })()

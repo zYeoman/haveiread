@@ -2,14 +2,16 @@
 我看过这个页面么？
 
 ## API
-POST localhost:5000/ {user:user,key:key,url:url}
+`curl -X POST localhost:7890/<username>/ -d {password:key,url:url, title:title, len:len}`
+
+`curl -X GET localhost:7890/<username>?url=https://baidu.com/`
 
 ```json
 {
-  "read":true,
-  "status":"ok|wrongkey|newuser",
-  "lastread":"time",
-  "count":"count",
+    "read": true,
+    "lastread": "2019-06-27 16:24:28",
+    "readtime": 180,
+    "count": 3
 }
 ```
 
@@ -30,15 +32,18 @@ SECRET_KEY = b'something'
 
 ```bash
 pip install waitress
-waitress-serve --call 'flaskr:create_app --port=PORT'
+(waitress-serve --port=7890 --call 'haveiread:create_app'&
 ```
 
 ## TODO
+* [x] Use raise error.
+* [x] Flask Bcrypt
+* [x] Track reading time
+* [ ] 支持 TAG 系统
+* [ ] 支持评论系统
+* [ ] 优化 UI
+* [ ] 管理页面
 * [ ] Deploy to [heroku](https://www.heroku.com/)
 * [ ] JS faster, more beautiful and more info.
 * [ ] JS only track in foreground
-* [ ] Use raise error.
-* [ ] Use peewee to control sql.
-* [ ] Flask Bcrypt
-* [ ] Track reading time
 * [ ] Info for all url in somepage: e.g. in github awesome-xxx repo / bilibili up spaces
