@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         HaveIRead
 // @namespace    https://mickir.me/
-// @version      0.8.0
+// @version      0.8.1
 // @description  Have I read this page?
 // @author       Mickir
 // @noframes
@@ -279,13 +279,16 @@
       }).catch((error) => console.log('Request Failes', error))
   }
 
-  var before = new Date()
-  var len = 0
+  let timer
+  let before = new Date()
+  let len = 0
   window.addEventListener('focus', () => {
     before = new Date()
+    window.clearTimeout(timer)
   })
   window.addEventListener('blur', () => {
     len += (new Date()) - before
+    timer = window.setTimeout(() => update(current_url, len), 5 * 60 * 1000)
   })
   window.addEventListener('beforeunload', (event) => {
     // 按ms计算
