@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         HaveIRead
 // @namespace    https://mickir.me/
-// @version      0.8.1
+// @version      0.8.2
 // @description  Have I read this page?
 // @author       Mickir
 // @noframes
@@ -288,7 +288,7 @@
   })
   window.addEventListener('blur', () => {
     len += (new Date()) - before
-    timer = window.setTimeout(() => update(current_url, len), 5 * 60 * 1000)
+    timer = window.setTimeout(() => update(current_url, len), 30 * 60 * 1000)
   })
   window.addEventListener('beforeunload', (event) => {
     // 按ms计算
