@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         HaveIRead
 // @namespace    https://mickir.me/
-// @version      0.8.2
+// @version      0.8.3
 // @description  Have I read this page?
 // @author       Mickir
 // @noframes
@@ -215,68 +215,63 @@
   let base_url = 'https://api.mickir.me'
   let read_url = base_url + '/read/' + username
   let comment_url = base_url + '/comment/' + username
-  function status (response) {
-    if (response.status >= 200 && response.status < 300) {
-      return Promise.resolve(response)
-    } else {
-      return Promise.reject(new Error(response.statusText))
-    }
-  }
 
-  function json (response) {
-    return response.json()
-  }
-  (function getinfo (url) {
-    var theurl = new URL(read_url)
-    var data = {
-      url: dms_get_pure_url(url)
+  void (function getinfo (url) {
+    let theurl = new URL(read_url)
+    let data = {
+      url: url
     }
     theurl.search = new URLSearchParams(data)
-    fetch(theurl)
-      .then(status)
-      .then(json)
-      .then((data) => {
+    window.GM.xmlHttpRequest({
+      method: 'GET',
+      url: theurl,
+      onload: response => {
+        let data = JSON.parse(response.responseText)
         console.log(data)
         input.innerText = (data.read && (data.comment || '看过')) || '没看过'
         show.style.color = (data.read && 'red') || 'green'
         if (input.innerText !== 'n' && data.read && data.count < 10) {
           show.style.display = 'block'
         }
-      }).catch((error) => console.log('Request Failes', error))
-  })(dms_get_pure_url(current_url))
+      }
+    })
+  }(dms_get_pure_url(current_url)))
   function update (url, len) {
-    var data = {
+    let data = {
       url: dms_get_pure_url(url),
       title: document.title,
       password: key,
       len: len
     }
-    fetch(read_url, {
-      method: 'POST',
-      body: JSON.stringify(data)
-    }).then(status)
-      .then(json)
-      .then((data) => {
-        console.log(data)
-      }).catch((error) => console.log('Request Failes', error))
+    window.GM.xmlHttpRequest(
+      { method: 'POST',
+        url: read_url,
+        data: JSON.stringify(data),
+        onload: response => {
+          console.log(JSON.parse(response.responseText))
+        }
+      }
+    )
   }
 
   function comment (url, text) {
-    var data = {
+    let data = {
       url: dms_get_pure_url(url),
-      title: document.title,
       comment: text,
       password: key
     }
-    fetch(comment_url, {
-      method: 'POST', data: JSON.stringify(data)
-    }).then(status)
-      .then(json)
-      .then((data) => {
+    window.GM.xmlHttpRequest({
+      method: 'POST',
+      url: comment_url,
+      data: JSON.stringify(data),
+      onload: response => {
+        var data = JSON.parse(response.responseText)
         if (data.status === 'OK') {
           input.blur()
+        } else {
         }
-      }).catch((error) => console.log('Request Failes', error))
+      }
+    })
   }
 
   let timer
