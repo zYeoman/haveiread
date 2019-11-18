@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         HaveIRead
 // @namespace    https://mickir.me/
-// @version      0.8.3
+// @version      0.8.4
 // @description  Have I read this page?
 // @author       Mickir
 // @noframes
@@ -9,6 +9,7 @@
 // @match        https://*/*
 // @exclude      https://www.google.com/search*
 // @exclude      https://www.notion.so/*
+// @exclude      https://feedly.com/*
 // @grant        GM_xmlhttpRequest
 // @grant        GM.xmlHttpRequest
 // @grant        GM_addStyle
