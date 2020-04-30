@@ -42,7 +42,7 @@ CREATE TABLE comments (
   createat TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   FOREIGN KEY (user_id) REFERENCES user (id)
   FOREIGN KEY (url_id) REFERENCES url (id)
-)
+);
 
 CREATE TRIGGER [UpdateLastTime]
     AFTER UPDATE
