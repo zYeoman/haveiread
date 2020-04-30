@@ -4,7 +4,7 @@
   "repository": "https://github.com/zYeoman/haveiread",
   "keywords": ["python", "flask", "track"],
   "scripts": {
-    "postdeploy": "flask init-db"
+    "postdeploy": "FLASK_APP=haveiread flask init-db"
   },
   "env": {
     "SECRET_KEY": {
