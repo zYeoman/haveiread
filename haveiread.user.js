@@ -284,7 +284,7 @@
   })
   window.addEventListener('blur', () => {
     len += (new Date()) - before
-    timer = window.setTimeout(() => update(current_url, len), 30 * 60 * 1000)
+    timer = window.setTimeout(() => update(current_url, len), 30 * 1000)
   })
   window.addEventListener('beforeunload', (event) => {
     // 按ms计算

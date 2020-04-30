@@ -1,0 +1,15 @@
+{
+  "name": "HaveIRead",
+  "description": "Have i read this page?",
+  "repository": "https://github.com/zYeoman/haveiread",
+  "keywords": ["python", "flask", "track"],
+  "scripts": {
+    "postdeploy": "flask init-db"
+  },
+  "env": {
+    "SECRET_KEY": {
+      "description": "A secret key",
+      "generator": "secret"
+    }
+  }
+}

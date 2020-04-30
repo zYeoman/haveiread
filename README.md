@@ -35,6 +35,9 @@ pip install waitress
 (waitress-serve --port=7890 --call 'haveiread:create_app'&
 ```
 
+## Deploy
+[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/zYeoman/haveiread/tree/master)
+
 ## TODO
 * [x] Use raise error.
 * [x] Flask Bcrypt
