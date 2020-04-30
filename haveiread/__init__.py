@@ -42,6 +42,10 @@ def create_app(test_config=None):
     from . import api
     api.init_app(app)
 
+    @app.route('/')
+    def hello_world():
+        return "hello world"
+
     CORS(app)
 
     return app
