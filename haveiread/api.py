@@ -34,8 +34,7 @@ def checkUser(cursor, user, key):
             'INSERT INTO user (username, password_hash) values (?,?)',
             (user, pw_hash))
         return cursor.lastrowid
-    elif bcrypt.check_password_hash(pw_hash, res['password_hash']) or \
-            (res['password_hash'] == 'default' and key == ''):
+    elif bcrypt.check_password_hash(res['password_hash'], key):
         return res['id']
     else:
         cursor.close()
